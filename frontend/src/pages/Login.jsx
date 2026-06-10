@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { LogoMark, Wordmark } from '../components/Logo';
 import { Truck, Shield, BarChart3, Users } from 'lucide-react';
 
 export default function Login() {
@@ -28,17 +29,15 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-[55%] bg-[#032d60] relative overflow-hidden flex-col justify-between p-12">
+      <div className="hidden lg:flex lg:w-[55%] bg-[#0a1f3c] relative overflow-hidden flex-col justify-between p-12">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#0176d3] -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#06a59a] translate-y-1/3 -translate-x-1/4" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#1763e6] -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#16b8c4] translate-y-1/3 -translate-x-1/4" />
         </div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center">
-              <Truck className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-white text-[22px] font-bold tracking-tight">LogiCRM</span>
+            <LogoMark size={40} className="rounded-lg" />
+            <Wordmark className="text-[22px]" />
           </div>
           <p className="text-[#b4c7e7] text-[14px] mt-1">Enterprise Logistics Sales Platform</p>
         </div>
@@ -52,7 +51,7 @@ export default function Login() {
               { icon: Truck, title: 'Logistics Native', desc: 'Built for freight & shipping' },
             ].map((f, i) => (
               <div key={i} className="bg-white/5 backdrop-blur border border-white/10 rounded-xl p-4">
-                <f.icon className="w-5 h-5 text-[#1b96ff] mb-2" />
+                <f.icon className="w-5 h-5 text-[#5b9bff] mb-2" />
                 <p className="text-white text-[13px] font-semibold">{f.title}</p>
                 <p className="text-[#b4c7e7] text-[11px] mt-0.5">{f.desc}</p>
               </div>
@@ -69,8 +68,8 @@ export default function Login() {
         <div className="w-full max-w-[380px]">
           <div className="text-center mb-8">
             <div className="lg:hidden flex items-center justify-center gap-2 mb-4">
-              <Truck className="w-7 h-7 text-[#0176d3]" />
-              <span className="text-[20px] font-bold text-[#181818]">LogiCRM</span>
+              <LogoMark size={28} />
+              <Wordmark className="text-[20px]" light={false} />
             </div>
             <h1 className="text-[22px] font-bold text-[#181818]">Welcome back</h1>
             <p className="text-[13px] text-[#706e6b] mt-1">Sign in to your account</p>
@@ -88,7 +87,7 @@ export default function Login() {
               <label className="sf-label">Password</label>
               <input type="password" className="sf-input" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
-            <button type="submit" disabled={loading} className="w-full h-[42px] bg-[#0176d3] hover:bg-[#014486] text-white rounded-lg text-[14px] font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+            <button type="submit" disabled={loading} className="w-full h-[42px] bg-[#1763e6] hover:bg-[#0f4fc0] text-white rounded-lg text-[14px] font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
               {loading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Sign In'}
             </button>
           </form>

@@ -12,9 +12,9 @@ const formatCurrency = (val) => {
   return `$${val}`;
 };
 
-const COLORS = ['#0176d3', '#2e844a', '#dd7a01', '#7526c4', '#ba0517', '#069', '#e87d7d', '#4bc076'];
+const COLORS = ['#1763e6', '#2e844a', '#dd7a01', '#7526c4', '#ba0517', '#069', '#e87d7d', '#4bc076'];
 const STAGE_LABELS = { prospecting: 'Prospecting', qualification: 'Qualification', proposal: 'Proposal', negotiation: 'Negotiation' };
-const STAGE_COLORS = { prospecting: '#0176d3', qualification: '#7526c4', proposal: '#dd7a01', negotiation: '#2e844a' };
+const STAGE_COLORS = { prospecting: '#1763e6', qualification: '#7526c4', proposal: '#dd7a01', negotiation: '#2e844a' };
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -56,7 +56,7 @@ export default function Dashboard() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-[3px] border-[#0176d3] border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-[3px] border-[#1763e6] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -97,7 +97,7 @@ export default function Dashboard() {
 
       {/* === METRICS CARDS === */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricCard icon={DollarSign} iconBg="bg-[#d8edff]" iconColor="text-[#0176d3]" label="Weighted Forecast" value={formatCurrency(inspection.weightedPipeline)} sub="Probability-adjusted" />
+        <MetricCard icon={DollarSign} iconBg="bg-[#d8edff]" iconColor="text-[#1763e6]" label="Weighted Forecast" value={formatCurrency(inspection.weightedPipeline)} sub="Probability-adjusted" />
         <MetricCard icon={Building2} iconBg="bg-[#f3e8ff]" iconColor="text-[#7526c4]" label="Active Accounts" value={stats?.totalAccounts || 0} sub={`${stats?.atRiskAccounts || 0} at risk`} subColor="text-[#ba0517]" />
         <MetricCard icon={Target} iconBg="bg-[#e3f3e8]" iconColor="text-[#2e844a]" label="Active Opportunities" value={inspection.activeCount || 0} sub={`Avg: ${formatCurrency(inspection.avgDealSize)}`} />
         <MetricCard icon={CheckSquare} iconBg="bg-[#fef3cd]" iconColor="text-[#8d6e00]" label="Pending Tasks" value={stats?.pendingTasks || 0} sub={`${stats?.overdueTasks || 0} overdue`} subColor="text-[#dd7a01]" />
@@ -110,7 +110,7 @@ export default function Dashboard() {
           <div className="sf-card-header">
             <h3 className="text-[13px] font-bold text-[#181818]">Revenue Performance</h3>
             <div className="flex items-center gap-4 text-[11px] text-[#706e6b]">
-              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-[#0176d3]" />Revenue</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-[#1763e6]" />Revenue</span>
               <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-[#c9c9c9]" />Target</span>
             </div>
           </div>
@@ -119,15 +119,15 @@ export default function Dashboard() {
               <ComposedChart data={revenueChartData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0176d3" stopOpacity={0.12} />
-                    <stop offset="95%" stopColor="#0176d3" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#1763e6" stopOpacity={0.12} />
+                    <stop offset="95%" stopColor="#1763e6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#706e6b' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#706e6b' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000)}K`} />
                 <Tooltip contentStyle={{ fontSize: 12, borderRadius: 4, border: '1px solid #e5e5e5' }} formatter={(v) => [`$${(v/1000).toFixed(0)}K`]} />
-                <Area type="monotone" dataKey="revenue" stroke="#0176d3" strokeWidth={2} fill="url(#revGrad)" dot={false} />
+                <Area type="monotone" dataKey="revenue" stroke="#1763e6" strokeWidth={2} fill="url(#revGrad)" dot={false} />
                 <Line type="monotone" dataKey="target" stroke="#c9c9c9" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
@@ -160,7 +160,7 @@ export default function Dashboard() {
             })}
             <div className="pt-3 border-t border-[#e5e5e5] flex justify-between">
               <span className="text-[12px] font-bold text-[#181818]">Total</span>
-              <span className="text-[13px] font-bold text-[#0176d3]">{formatCurrency(inspection.totalPipeline)}</span>
+              <span className="text-[13px] font-bold text-[#1763e6]">{formatCurrency(inspection.totalPipeline)}</span>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@ export default function Dashboard() {
                     <td>
                       <div className="flex items-center gap-1.5">
                         <div className="w-10 h-[4px] bg-[#e5e5e5] rounded-full overflow-hidden">
-                          <div className="h-full rounded-full" style={{width:`${d.probability}%`, backgroundColor: d.probability>=70?'#2e844a':d.probability>=40?'#dd7a01':'#0176d3'}} />
+                          <div className="h-full rounded-full" style={{width:`${d.probability}%`, backgroundColor: d.probability>=70?'#2e844a':d.probability>=40?'#dd7a01':'#1763e6'}} />
                         </div>
                         <span className="text-[10px] text-[#706e6b]">{d.probability}%</span>
                       </div>
@@ -253,7 +253,7 @@ export default function Dashboard() {
             {(activities||[]).slice(0,5).map((a,i) => (
               <div key={i} className="px-4 py-2.5 flex items-center gap-3 hover:bg-[#fafaf9] transition-colors">
                 <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
-                  a.type==='call'?'bg-[#d8edff] text-[#0176d3]':a.type==='email'?'bg-[#e3f3e8] text-[#2e844a]':a.type==='meeting'?'bg-[#f3e8ff] text-[#7526c4]':'bg-[#f3f3f3] text-[#706e6b]'
+                  a.type==='call'?'bg-[#d8edff] text-[#1763e6]':a.type==='email'?'bg-[#e3f3e8] text-[#2e844a]':a.type==='meeting'?'bg-[#f3e8ff] text-[#7526c4]':'bg-[#f3f3f3] text-[#706e6b]'
                 }`}>
                   {a.type==='call'?<Phone className="w-3 h-3"/>:a.type==='email'?<Mail className="w-3 h-3"/>:a.type==='meeting'?<Calendar className="w-3 h-3"/>:<FileText className="w-3 h-3"/>}
                 </div>
@@ -261,7 +261,7 @@ export default function Dashboard() {
                   <p className="text-[12px] font-medium text-[#181818] truncate">{a.subject}</p>
                   <p className="text-[11px] text-[#706e6b] truncate">{a.account_name}</p>
                 </div>
-                <span className={`text-[10px] font-semibold ${a.status==='completed'?'text-[#2e844a]':'text-[#0176d3]'}`}>
+                <span className={`text-[10px] font-semibold ${a.status==='completed'?'text-[#2e844a]':'text-[#1763e6]'}`}>
                   {a.status==='completed'?'Done':'Planned'}
                 </span>
               </div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
               return (
                 <div key={i} className="px-4 py-2.5 flex items-center gap-3 hover:bg-[#fafaf9] transition-colors">
                   <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    t.priority==='urgent'?'bg-[#ba0517]':t.priority==='high'?'bg-[#dd7a01]':t.priority==='medium'?'bg-[#0176d3]':'bg-[#c9c9c9]'
+                    t.priority==='urgent'?'bg-[#ba0517]':t.priority==='high'?'bg-[#dd7a01]':t.priority==='medium'?'bg-[#1763e6]':'bg-[#c9c9c9]'
                   }`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-[12px] font-medium text-[#181818] truncate">{t.title}</p>
@@ -314,7 +314,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-[12px] font-bold text-[#181818]">{formatCurrency(a.pipeline_value)}</p>
-                  <span className={`text-[10px] font-semibold ${a.account_health==='excellent'?'text-[#2e844a]':a.account_health==='good'?'text-[#0176d3]':'text-[#ba0517]'}`}>
+                  <span className={`text-[10px] font-semibold ${a.account_health==='excellent'?'text-[#2e844a]':a.account_health==='good'?'text-[#1763e6]':'text-[#ba0517]'}`}>
                     {a.account_health}
                   </span>
                 </div>
@@ -330,7 +330,7 @@ export default function Dashboard() {
 // === Sub-components ===
 function KPICell({ label, value, active, color }) {
   return (
-    <div className={`flex-1 px-4 py-3 text-center ${active ? 'bg-[#0176d3]' : ''}`}>
+    <div className={`flex-1 px-4 py-3 text-center ${active ? 'bg-[#1763e6]' : ''}`}>
       <div className={`text-[16px] font-bold leading-tight ${active ? 'text-white' : ''}`} style={!active && color ? {color} : {}}>
         {value}
       </div>

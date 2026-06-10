@@ -3,7 +3,7 @@ import api from '../utils/api';
 import { Plus, ArrowRight, X, Building2, MapPin } from 'lucide-react';
 
 const STAGES = [
-  { key: 'prospecting', label: 'Prospecting', color: '#0176d3' },
+  { key: 'prospecting', label: 'Prospecting', color: '#1763e6' },
   { key: 'qualification', label: 'Qualification', color: '#7526c4' },
   { key: 'proposal', label: 'Proposal', color: '#dd7a01' },
   { key: 'negotiation', label: 'Negotiation', color: '#2e844a' },
@@ -55,7 +55,7 @@ export default function Pipeline() {
     loadData();
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#0176d3] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#1763e6] border-t-transparent rounded-full animate-spin" /></div>;
 
   const totalPipeline = STAGES.reduce((s, st) => s + ((pipeline[st.key]||[]).reduce((a,d) => a + (d.value||0), 0)), 0);
 
@@ -70,8 +70,8 @@ export default function Pipeline() {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex rounded border border-[#c9c9c9] overflow-hidden">
-              <button onClick={() => setView('kanban')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${view==='kanban'?'bg-[#0176d3] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}>Board</button>
-              <button onClick={() => setView('list')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${view==='list'?'bg-[#0176d3] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}>List</button>
+              <button onClick={() => setView('kanban')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${view==='kanban'?'bg-[#1763e6] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}>Board</button>
+              <button onClick={() => setView('list')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${view==='list'?'bg-[#1763e6] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}>List</button>
             </div>
             <button onClick={() => setShowCreate(true)} className="sf-btn-primary"><Plus className="w-3.5 h-3.5" /> New</button>
           </div>
@@ -113,8 +113,8 @@ export default function Pipeline() {
                     const currentIdx = STAGES.findIndex(s => s.key === stage.key);
                     const nextStage = STAGES[currentIdx + 1];
                     return (
-                      <div key={deal.id} className="bg-white rounded border border-[#e5e5e5] p-3 hover:border-[#0176d3] transition-colors group" style={{boxShadow:'0 1px 2px rgba(0,0,0,0.06)'}}>
-                        <p className="text-[12px] font-semibold text-[#0176d3] truncate">{deal.title}</p>
+                      <div key={deal.id} className="bg-white rounded border border-[#e5e5e5] p-3 hover:border-[#1763e6] transition-colors group" style={{boxShadow:'0 1px 2px rgba(0,0,0,0.06)'}}>
+                        <p className="text-[12px] font-semibold text-[#1763e6] truncate">{deal.title}</p>
                         {deal.account_name && <p className="text-[11px] text-[#706e6b] mt-1 flex items-center gap-1"><Building2 className="w-3 h-3" />{deal.account_name}</p>}
                         {deal.origin && <p className="text-[10px] text-[#939393] mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" />{deal.origin} → {deal.destination}</p>}
                         <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#e5e5e5]">
@@ -125,7 +125,7 @@ export default function Pipeline() {
                         </div>
                         <div className="flex gap-1 mt-2 pt-2 border-t border-[#e5e5e5] opacity-0 group-hover:opacity-100 transition-opacity">
                           {nextStage ? (
-                            <button onClick={() => moveStage(deal.id, nextStage.key)} className="text-[10px] text-[#0176d3] font-semibold hover:underline flex items-center gap-0.5">
+                            <button onClick={() => moveStage(deal.id, nextStage.key)} className="text-[10px] text-[#1763e6] font-semibold hover:underline flex items-center gap-0.5">
                               Move to {nextStage.label} <ArrowRight className="w-3 h-3" />
                             </button>
                           ) : (
@@ -176,7 +176,7 @@ export default function Pipeline() {
                     <td>
                       <div className="flex items-center gap-1.5">
                         <div className="w-10 h-[4px] bg-[#e5e5e5] rounded-full overflow-hidden">
-                          <div className="h-full rounded-full" style={{width:`${deal.probability}%`,backgroundColor:deal.probability>=70?'#2e844a':deal.probability>=40?'#dd7a01':'#0176d3'}} />
+                          <div className="h-full rounded-full" style={{width:`${deal.probability}%`,backgroundColor:deal.probability>=70?'#2e844a':deal.probability>=40?'#dd7a01':'#1763e6'}} />
                         </div>
                         <span className="text-[10px] text-[#706e6b]">{deal.probability}%</span>
                       </div>

@@ -39,11 +39,11 @@ export default function Activities() {
   const typeIcon = (type) => {
     const icons = { call: Phone, email: Mail, meeting: Calendar, note: FileText };
     const Icon = icons[type] || Activity;
-    const colors = { call:'bg-[#d8edff] text-[#0176d3]', email:'bg-[#e3f3e8] text-[#2e844a]', meeting:'bg-[#f3e8ff] text-[#7526c4]', note:'bg-[#fef3cd] text-[#8d6e00]' };
+    const colors = { call:'bg-[#d8edff] text-[#1763e6]', email:'bg-[#e3f3e8] text-[#2e844a]', meeting:'bg-[#f3e8ff] text-[#7526c4]', note:'bg-[#fef3cd] text-[#8d6e00]' };
     return <div className={`w-7 h-7 rounded flex items-center justify-center ${colors[type]||'bg-[#f3f3f3] text-[#706e6b]'}`}><Icon className="w-3.5 h-3.5" /></div>;
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#0176d3] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#1763e6] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="space-y-4 pb-8">
@@ -64,7 +64,7 @@ export default function Activities() {
       {/* Filters */}
       <div className="flex items-center gap-2">
         {[{key:'',label:'All'},{key:'call',label:'Calls'},{key:'email',label:'Emails'},{key:'meeting',label:'Meetings'},{key:'note',label:'Notes'}].map(f => (
-          <button key={f.key} onClick={() => setTypeFilter(f.key)} className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${typeFilter===f.key?'bg-[#0176d3] text-white':'bg-white border border-[#c9c9c9] text-[#181818] hover:bg-[#f3f3f3]'}`}>{f.label}</button>
+          <button key={f.key} onClick={() => setTypeFilter(f.key)} className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${typeFilter===f.key?'bg-[#1763e6] text-white':'bg-white border border-[#c9c9c9] text-[#181818] hover:bg-[#f3f3f3]'}`}>{f.label}</button>
         ))}
       </div>
 

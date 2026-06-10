@@ -153,7 +153,7 @@ export default function Contracts() {
     return { active: active.length, totalValue, monthlyRevenue, atRisk, renewingSoon, total: allContracts.length };
   }, [allContracts]);
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#0176d3] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#1763e6] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="space-y-4 pb-8">
@@ -171,8 +171,8 @@ export default function Contracts() {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex rounded border border-[#c9c9c9] overflow-hidden">
-              <button onClick={() => setView('board')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors flex items-center gap-1 ${view==='board'?'bg-[#0176d3] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}><LayoutGrid className="w-3 h-3" />Board</button>
-              <button onClick={() => setView('table')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors flex items-center gap-1 ${view==='table'?'bg-[#0176d3] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}><List className="w-3 h-3" />Table</button>
+              <button onClick={() => setView('board')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors flex items-center gap-1 ${view==='board'?'bg-[#1763e6] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}><LayoutGrid className="w-3 h-3" />Board</button>
+              <button onClick={() => setView('table')} className={`px-3 py-1.5 text-[12px] font-medium transition-colors flex items-center gap-1 ${view==='table'?'bg-[#1763e6] text-white':'bg-white text-[#181818] hover:bg-[#f3f3f3]'}`}><List className="w-3 h-3" />Table</button>
             </div>
             <button onClick={() => setShowCreate(true)} className="sf-btn-primary"><Plus className="w-3.5 h-3.5" /> New Contract</button>
           </div>
@@ -272,7 +272,7 @@ export default function Contracts() {
                         <div key={contract.id} className="grid grid-cols-[2fr_1.2fr_0.8fr_0.7fr_1.5fr_0.8fr_0.6fr_0.5fr] gap-0 border-t border-[#e5e5e5] px-4 py-2.5 hover:bg-[#f3f7ff] transition-colors group items-center" style={{borderLeft: `4px solid ${groupColor}`}}>
                           {/* Contract Name */}
                           <div className="pr-2">
-                            <button onClick={() => setShowDetail(contract)} className="text-[12px] font-semibold text-[#0176d3] hover:underline text-left truncate block max-w-full">{contract.title}</button>
+                            <button onClick={() => setShowDetail(contract)} className="text-[12px] font-semibold text-[#1763e6] hover:underline text-left truncate block max-w-full">{contract.title}</button>
                             <p className="text-[10px] text-[#939393] mt-0.5">{contract.contract_number} · {TYPE_CONFIG[contract.type]?.short || contract.type}</p>
                           </div>
 
@@ -507,10 +507,10 @@ export default function Contracts() {
 
               {/* SLA Section */}
               {showDetail.sla_terms && (
-                <div className="bg-[#d8edff] rounded-lg p-4 border border-[#0176d3]/20">
+                <div className="bg-[#d8edff] rounded-lg p-4 border border-[#1763e6]/20">
                   <div className="flex items-center gap-2 mb-2">
-                    <Shield className="w-4 h-4 text-[#0176d3]" />
-                    <span className="text-[11px] font-bold text-[#014486] uppercase">SLA Terms</span>
+                    <Shield className="w-4 h-4 text-[#1763e6]" />
+                    <span className="text-[11px] font-bold text-[#0f4fc0] uppercase">SLA Terms</span>
                   </div>
                   <p className="text-[12px] text-[#181818]">{showDetail.sla_terms}</p>
                 </div>

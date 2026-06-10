@@ -43,7 +43,7 @@ export default function Quotes() {
     loadQuotes();
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#0176d3] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#1763e6] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="space-y-4 pb-8">
@@ -64,7 +64,7 @@ export default function Quotes() {
       {/* Filters */}
       <div className="flex items-center gap-2">
         {[{key:'',label:'All'},{key:'draft',label:'Draft'},{key:'sent',label:'Sent'},{key:'accepted',label:'Accepted'},{key:'rejected',label:'Rejected'}].map(f => (
-          <button key={f.key} onClick={() => setStatusFilter(f.key)} className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${statusFilter===f.key?'bg-[#0176d3] text-white':'bg-white border border-[#c9c9c9] text-[#181818] hover:bg-[#f3f3f3]'}`}>{f.label}</button>
+          <button key={f.key} onClick={() => setStatusFilter(f.key)} className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${statusFilter===f.key?'bg-[#1763e6] text-white':'bg-white border border-[#c9c9c9] text-[#181818] hover:bg-[#f3f3f3]'}`}>{f.label}</button>
         ))}
       </div>
 
@@ -96,7 +96,7 @@ export default function Quotes() {
                   <td><span className={`sf-badge ${q.status==='accepted'?'sf-badge-success':q.status==='sent'?'sf-badge-info':q.status==='rejected'?'sf-badge-error':'sf-badge-neutral'}`}>{q.status}</span></td>
                   <td>
                     <div className="flex gap-2">
-                      {q.status === 'draft' && <button onClick={() => updateStatus(q.id, 'sent')} className="text-[11px] text-[#0176d3] font-semibold hover:underline">Send</button>}
+                      {q.status === 'draft' && <button onClick={() => updateStatus(q.id, 'sent')} className="text-[11px] text-[#1763e6] font-semibold hover:underline">Send</button>}
                       {q.status === 'sent' && (
                         <>
                           <button onClick={() => updateStatus(q.id, 'accepted')} className="text-[11px] text-[#2e844a] font-semibold hover:underline">Accept</button>

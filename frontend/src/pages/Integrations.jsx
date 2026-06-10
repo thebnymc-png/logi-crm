@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 
 const CATEGORY_META = {
-  tms: { label: 'TMS', color: '#0176d3', bg: '#e1f5fe', description: 'Transportation Management' },
+  tms: { label: 'TMS', color: '#1763e6', bg: '#e1f5fe', description: 'Transportation Management' },
   wms: { label: 'WMS', color: '#7c3aed', bg: '#ede9fe', description: 'Warehouse Management' },
   erp: { label: 'ERP', color: '#ea580c', bg: '#fff7ed', description: 'Enterprise Resource Planning' },
   freight: { label: 'Freight', color: '#0891b2', bg: '#ecfeff', description: 'Freight Platforms' },
@@ -121,7 +121,7 @@ export default function Integrations() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#0176d3]"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#1763e6]"></div>
       </div>
     );
   }
@@ -131,17 +131,17 @@ export default function Integrations() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#032d60]">Integrations</h1>
+          <h1 className="text-2xl font-bold text-[#0a1f3c]">Integrations</h1>
           <p className="text-sm text-gray-500 mt-1">{integrations.length} connected · {providers.length} available integrations</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => { setView('connected'); }} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'connected' ? 'bg-[#0176d3] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
+          <button onClick={() => { setView('connected'); }} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'connected' ? 'bg-[#1763e6] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
             Connected ({integrations.length})
           </button>
-          <button onClick={() => { setView('marketplace'); }} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'marketplace' ? 'bg-[#0176d3] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
+          <button onClick={() => { setView('marketplace'); }} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'marketplace' ? 'bg-[#1763e6] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
             Marketplace
           </button>
-          <button onClick={() => { setView('logs'); loadLogs(); }} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'logs' ? 'bg-[#0176d3] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
+          <button onClick={() => { setView('logs'); loadLogs(); }} className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'logs' ? 'bg-[#1763e6] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
             Activity Log
           </button>
         </div>
@@ -150,7 +150,7 @@ export default function Integrations() {
       {/* Stats Bar */}
       <div className="grid grid-cols-5 gap-4">
         {[
-          { label: 'Total Integrations', value: stats.total_integrations || 0, color: '#0176d3' },
+          { label: 'Total Integrations', value: stats.total_integrations || 0, color: '#1763e6' },
           { label: 'Active', value: stats.active_integrations || 0, color: '#16a34a' },
           { label: 'Errors', value: stats.errored_integrations || 0, color: '#dc2626' },
           { label: 'Total Syncs', value: stats.total_syncs || 0, color: '#7c3aed' },
@@ -171,7 +171,7 @@ export default function Integrations() {
               <div className="text-4xl mb-4">🔌</div>
               <h3 className="text-lg font-semibold text-gray-700">No Integrations Connected</h3>
               <p className="text-gray-500 mt-2">Browse the marketplace to connect your first integration</p>
-              <button onClick={() => setView('marketplace')} className="mt-4 px-6 py-2 bg-[#0176d3] text-white rounded-md text-sm font-medium hover:bg-[#014486] transition-colors">
+              <button onClick={() => setView('marketplace')} className="mt-4 px-6 py-2 bg-[#1763e6] text-white rounded-md text-sm font-medium hover:bg-[#0f4fc0] transition-colors">
                 Browse Marketplace
               </button>
             </div>
@@ -228,7 +228,7 @@ export default function Integrations() {
                             <button
                               onClick={() => handleSync(integration.id)}
                               disabled={syncing[integration.id]}
-                              className="px-3 py-1.5 text-xs font-medium bg-[#0176d3] text-white rounded-md hover:bg-[#014486] disabled:opacity-50 transition-colors"
+                              className="px-3 py-1.5 text-xs font-medium bg-[#1763e6] text-white rounded-md hover:bg-[#0f4fc0] disabled:opacity-50 transition-colors"
                             >
                               {syncing[integration.id] ? '⟳ Syncing...' : '⟳ Sync'}
                             </button>
@@ -274,7 +274,7 @@ export default function Integrations() {
                 placeholder="Search integrations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0176d3] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1763e6] focus:border-transparent"
               />
               <svg className="absolute left-3 top-3 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
@@ -283,7 +283,7 @@ export default function Integrations() {
                 <button
                   key={cat.key}
                   onClick={() => setCategoryFilter(cat.key)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${categoryFilter === cat.key ? 'bg-[#0176d3] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${categoryFilter === cat.key ? 'bg-[#1763e6] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
                 >
                   {cat.label}
                 </button>
@@ -297,7 +297,7 @@ export default function Integrations() {
               const catMeta = CATEGORY_META[provider.category] || {};
               const isConnected = connectedProviderIds.includes(provider.id);
               return (
-                <div key={provider.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md hover:border-[#0176d3]/30 transition-all group">
+                <div key={provider.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md hover:border-[#1763e6]/30 transition-all group">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm" style={{ background: catMeta.bg || '#f3f4f6' }}>
@@ -340,7 +340,7 @@ export default function Integrations() {
                     {!isConnected ? (
                       <button
                         onClick={() => { setConnectModal(provider); setConnectForm({}); }}
-                        className="px-4 py-1.5 bg-[#0176d3] text-white rounded-md text-xs font-medium hover:bg-[#014486] transition-colors opacity-0 group-hover:opacity-100"
+                        className="px-4 py-1.5 bg-[#1763e6] text-white rounded-md text-xs font-medium hover:bg-[#0f4fc0] transition-colors opacity-0 group-hover:opacity-100"
                       >
                         Connect
                       </button>
@@ -395,7 +395,7 @@ export default function Integrations() {
       {connectModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] animate-fadeIn" onClick={() => setConnectModal(null)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-[#032d60] to-[#0176d3]">
+            <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-[#0a1f3c] to-[#1763e6]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-xl">
                   {connectModal.icon}
@@ -414,7 +414,7 @@ export default function Integrations() {
                   placeholder={connectModal.name}
                   value={connectForm.name || ''}
                   onChange={e => setConnectForm({ ...connectForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0176d3] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#1763e6] focus:border-transparent"
                 />
               </div>
               {connectModal.fields.map(field => (
@@ -425,7 +425,7 @@ export default function Integrations() {
                     placeholder={`Enter ${field.replace(/_/g, ' ')}`}
                     value={connectForm[field] || ''}
                     onChange={e => setConnectForm({ ...connectForm, [field]: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0176d3] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#1763e6] focus:border-transparent"
                   />
                 </div>
               ))}
@@ -436,7 +436,7 @@ export default function Integrations() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Sync Interval</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0176d3]">
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#1763e6]">
                       <option value="5min">Every 5 minutes</option>
                       <option value="15min" selected>Every 15 minutes</option>
                       <option value="30min">Every 30 minutes</option>
@@ -446,7 +446,7 @@ export default function Integrations() {
                   </div>
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Direction</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0176d3]">
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#1763e6]">
                       <option value="bidirectional">Bidirectional</option>
                       <option value="inbound">Inbound only</option>
                       <option value="outbound">Outbound only</option>
@@ -471,7 +471,7 @@ export default function Integrations() {
               <button onClick={() => setConnectModal(null)} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
                 Cancel
               </button>
-              <button onClick={() => handleConnect(connectModal)} className="px-6 py-2 text-sm font-medium text-white bg-[#0176d3] rounded-md hover:bg-[#014486] transition-colors shadow-sm">
+              <button onClick={() => handleConnect(connectModal)} className="px-6 py-2 text-sm font-medium text-white bg-[#1763e6] rounded-md hover:bg-[#0f4fc0] transition-colors shadow-sm">
                 Connect Integration
               </button>
             </div>

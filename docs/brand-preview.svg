@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="860" fill="#f3f4f6"/>
+
+  <!-- Title -->
+  <text x="40" y="48" font-size="24" font-weight="700" fill="#0a1f3c">LogiCRM — Proposed Visual Identity</text>
+  <text x="40" y="72" font-size="13" fill="#64748b">Shares the sister product's design language (chevron mark, two-tone wordmark, navy + teal) under its own name.</text>
+
+  <!-- ===== APP HEADER MOCK ===== -->
+  <text x="40" y="112" font-size="12" font-weight="700" fill="#94a3b8" letter-spacing="1">APP HEADER</text>
+  <g transform="translate(40,124)">
+    <rect width="1120" height="48" rx="6" fill="#0a1f3c"/>
+    <!-- logo mark -->
+    <g transform="translate(16,11)">
+      <rect width="26" height="26" rx="6" fill="#1763e6"/>
+      <path d="M8 7l5 6-5 6" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13 7l5 6-5 6" stroke="#7fe3ec" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="52" y="30" font-size="15" font-weight="700"><tspan fill="#ffffff">Logi</tspan><tspan fill="#16b8c4">CRM</tspan></text>
+    <!-- nav -->
+    <g font-size="12.5" font-weight="500">
+      <text x="150" y="30" fill="#ffffff">Home</text>
+      <rect x="148" y="44" width="34" height="3" rx="1.5" fill="#ffffff"/>
+      <text x="205" y="30" fill="#ffffff" opacity="0.65">Opportunities</text>
+      <text x="300" y="30" fill="#ffffff" opacity="0.65">Accounts</text>
+      <text x="372" y="30" fill="#ffffff" opacity="0.65">Contacts</text>
+      <text x="440" y="30" fill="#ffffff" opacity="0.65">Activities</text>
+      <text x="512" y="30" fill="#ffffff" opacity="0.65">Quotes</text>
+      <text x="565" y="30" fill="#ffffff" opacity="0.65">Tasks</text>
+      <text x="612" y="30" fill="#ffffff" opacity="0.65">Contracts</text>
+      <text x="685" y="30" fill="#ffffff" opacity="0.65">Reports</text>
+    </g>
+    <!-- search + avatar -->
+    <rect x="930" y="11" width="120" height="26" rx="5" fill="#ffffff" opacity="0.10"/>
+    <text x="946" y="28" font-size="11.5" fill="#ffffff" opacity="0.7">Search...</text>
+    <circle cx="1082" cy="24" r="13" fill="#1763e6"/>
+    <text x="1082" y="28" font-size="10.5" font-weight="700" fill="#ffffff" text-anchor="middle">JB</text>
+  </g>
+
+  <!-- ===== LOGIN MOCK ===== -->
+  <text x="40" y="216" font-size="12" font-weight="700" fill="#94a3b8" letter-spacing="1">LOGIN SCREEN</text>
+  <g transform="translate(40,228)">
+    <!-- card frame -->
+    <rect width="1120" height="360" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+    <!-- left navy hero -->
+    <clipPath id="heroClip"><rect width="640" height="360" rx="10"/></clipPath>
+    <g clip-path="url(#heroClip)">
+      <rect width="640" height="360" fill="#0a1f3c"/>
+      <circle cx="600" cy="40" r="190" fill="#1763e6" opacity="0.12"/>
+      <circle cx="60" cy="340" r="140" fill="#16b8c4" opacity="0.12"/>
+      <!-- logo -->
+      <g transform="translate(44,44)">
+        <rect width="40" height="40" rx="9" fill="#1763e6"/>
+        <path d="M12 11l8 9-8 9" stroke="#ffffff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 11l8 9-8 9" stroke="#7fe3ec" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text x="96" y="71" font-size="22" font-weight="700"><tspan fill="#ffffff">Logi</tspan><tspan fill="#16b8c4">CRM</tspan></text>
+      <text x="46" y="104" font-size="13" fill="#b4c7e7">Enterprise Logistics Sales Platform</text>
+      <text x="46" y="184" font-size="27" font-weight="700" fill="#ffffff">The #1 CRM built</text>
+      <text x="46" y="218" font-size="27" font-weight="700" fill="#ffffff">for logistics sales.</text>
+      <!-- feature cards -->
+      <g>
+        <rect x="46" y="248" width="262" height="74" rx="10" fill="#ffffff" opacity="0.06"/>
+        <rect x="46" y="248" width="262" height="74" rx="10" fill="none" stroke="#ffffff" stroke-opacity="0.10"/>
+        <text x="64" y="284" font-size="13" font-weight="600" fill="#ffffff">Pipeline Intelligence</text>
+        <text x="64" y="304" font-size="11" fill="#b4c7e7">AI-powered deal forecasting</text>
+        <rect x="322" y="248" width="262" height="74" rx="10" fill="#ffffff" opacity="0.06"/>
+        <rect x="322" y="248" width="262" height="74" rx="10" fill="none" stroke="#ffffff" stroke-opacity="0.10"/>
+        <text x="340" y="284" font-size="13" font-weight="600" fill="#ffffff">Enterprise Security</text>
+        <text x="340" y="304" font-size="11" fill="#b4c7e7">SOC 2 compliant platform</text>
+      </g>
+    </g>
+    <!-- right form -->
+    <g transform="translate(640,0)">
+      <rect width="480" height="360" rx="10" fill="#f4f6f9"/>
+      <text x="240" y="92" font-size="20" font-weight="700" fill="#181818" text-anchor="middle">Welcome back</text>
+      <text x="240" y="116" font-size="13" fill="#706e6b" text-anchor="middle">Sign in to your account</text>
+      <text x="110" y="156" font-size="12" font-weight="600" fill="#3e3e3c">Email</text>
+      <rect x="110" y="164" width="260" height="38" rx="6" fill="#ffffff" stroke="#c9c9c9"/>
+      <text x="124" y="188" font-size="12.5" fill="#181818">admin@logisticscrm.com</text>
+      <text x="110" y="226" font-size="12" font-weight="600" fill="#3e3e3c">Password</text>
+      <rect x="110" y="234" width="260" height="38" rx="6" fill="#ffffff" stroke="#c9c9c9"/>
+      <text x="124" y="258" font-size="14" fill="#181818">••••••••</text>
+      <rect x="110" y="288" width="260" height="42" rx="8" fill="#1763e6"/>
+      <text x="240" y="314" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">Sign In</text>
+    </g>
+  </g>
+
+  <!-- ===== PALETTE ===== -->
+  <text x="40" y="632" font-size="12" font-weight="700" fill="#94a3b8" letter-spacing="1">PALETTE</text>
+  <g transform="translate(40,648)">
+    <g>
+      <rect width="150" height="72" rx="8" fill="#0a1f3c"/>
+      <text x="14" y="44" font-size="13" font-weight="700" fill="#ffffff">Navy</text>
+      <text x="14" y="62" font-size="11" fill="#ffffff" opacity="0.7">#0A1F3C</text>
+    </g>
+    <g transform="translate(166,0)">
+      <rect width="150" height="72" rx="8" fill="#1763e6"/>
+      <text x="14" y="44" font-size="13" font-weight="700" fill="#ffffff">Primary</text>
+      <text x="14" y="62" font-size="11" fill="#ffffff" opacity="0.8">#1763E6</text>
+    </g>
+    <g transform="translate(332,0)">
+      <rect width="150" height="72" rx="8" fill="#0f4fc0"/>
+      <text x="14" y="44" font-size="13" font-weight="700" fill="#ffffff">Primary Hover</text>
+      <text x="14" y="62" font-size="11" fill="#ffffff" opacity="0.8">#0F4FC0</text>
+    </g>
+    <g transform="translate(498,0)">
+      <rect width="150" height="72" rx="8" fill="#16b8c4"/>
+      <text x="14" y="44" font-size="13" font-weight="700" fill="#ffffff">Accent Teal</text>
+      <text x="14" y="62" font-size="11" fill="#ffffff" opacity="0.85">#16B8C4</text>
+    </g>
+    <g transform="translate(664,0)">
+      <rect width="150" height="72" rx="8" fill="#e3edff" stroke="#dbe6ff"/>
+      <text x="14" y="44" font-size="13" font-weight="700" fill="#0b3e99">Info</text>
+      <text x="14" y="62" font-size="11" fill="#0b3e99" opacity="0.8">#E3EDFF</text>
+    </g>
+    <g transform="translate(830,0)">
+      <rect width="290" height="72" rx="8" fill="#ffffff" stroke="#e5e7eb"/>
+      <text x="16" y="30" font-size="11" font-weight="700" fill="#64748b">MARK</text>
+      <g transform="translate(16,34)">
+        <rect width="30" height="30" rx="7" fill="#1763e6"/>
+        <path d="M9 8l6 7-6 7" stroke="#ffffff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15 8l6 7-6 7" stroke="#7fe3ec" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text x="60" y="55" font-size="18" font-weight="700"><tspan fill="#0a1f3c">Logi</tspan><tspan fill="#16b8c4">CRM</tspan></text>
+    </g>
+  </g>
+</svg>

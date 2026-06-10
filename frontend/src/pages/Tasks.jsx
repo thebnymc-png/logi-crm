@@ -38,9 +38,9 @@ export default function Tasks() {
     loadData();
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#0176d3] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-[3px] border-[#1763e6] border-t-transparent rounded-full animate-spin" /></div>;
 
-  const priorityColors = { urgent:'bg-[#ba0517]', high:'bg-[#dd7a01]', medium:'bg-[#0176d3]', low:'bg-[#c9c9c9]' };
+  const priorityColors = { urgent:'bg-[#ba0517]', high:'bg-[#dd7a01]', medium:'bg-[#1763e6]', low:'bg-[#c9c9c9]' };
 
   return (
     <div className="space-y-4 pb-8">
@@ -61,7 +61,7 @@ export default function Tasks() {
       {/* Filters */}
       <div className="flex items-center gap-2">
         {[{key:'pending',label:'Open'},{key:'completed',label:'Completed'},{key:'',label:'All'}].map(f => (
-          <button key={f.key} onClick={() => setFilter(f.key)} className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${filter===f.key?'bg-[#0176d3] text-white':'bg-white border border-[#c9c9c9] text-[#181818] hover:bg-[#f3f3f3]'}`}>{f.label}</button>
+          <button key={f.key} onClick={() => setFilter(f.key)} className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${filter===f.key?'bg-[#1763e6] text-white':'bg-white border border-[#c9c9c9] text-[#181818] hover:bg-[#f3f3f3]'}`}>{f.label}</button>
         ))}
       </div>
 
@@ -96,7 +96,7 @@ export default function Tasks() {
                     <td><span className={`sf-badge ${t.status==='completed'?'sf-badge-success':'sf-badge-neutral'}`}>{t.status}</span></td>
                     <td>
                       {t.status !== 'completed' && (
-                        <button onClick={() => completeTask(t.id)} className="text-[11px] text-[#0176d3] font-semibold hover:underline">Complete</button>
+                        <button onClick={() => completeTask(t.id)} className="text-[11px] text-[#1763e6] font-semibold hover:underline">Complete</button>
                       )}
                     </td>
                   </tr>

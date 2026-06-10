@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LayoutDashboard, GitBranch, Building2, Users, Activity, FileText, CheckSquare, BarChart3, Search, Bell, Settings, LogOut, ChevronDown, Truck, X, Plus, HelpCircle } from 'lucide-react';
+import { LogoMark, Wordmark } from './Logo';
+import { LayoutDashboard, GitBranch, Building2, Users, Activity, FileText, CheckSquare, BarChart3, Search, Bell, Settings, LogOut, ChevronDown, X, Plus, HelpCircle } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Home' },
@@ -38,13 +39,11 @@ export default function Layout() {
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-[#f3f3f3]">
       {/* === SALESFORCE TOP NAV BAR === */}
-      <header className="h-[45px] bg-[#032d60] flex items-center px-4 flex-shrink-0 z-50 relative">
+      <header className="h-[45px] bg-[#0a1f3c] flex items-center px-4 flex-shrink-0 z-50 relative">
         {/* Logo */}
         <div className="flex items-center gap-2.5 mr-4">
-          <div className="w-[26px] h-[26px] bg-white/15 rounded flex items-center justify-center">
-            <Truck className="w-[14px] h-[14px] text-white" />
-          </div>
-          <span className="text-white font-bold text-[15px] tracking-tight hidden sm:block">LogiCRM</span>
+          <LogoMark size={26} />
+          <Wordmark className="text-[15px] hidden sm:block" />
         </div>
 
         {/* Divider */}
@@ -98,7 +97,7 @@ export default function Layout() {
           {/* Notifications */}
           <button className="w-[30px] h-[30px] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors relative">
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1 right-1 w-[7px] h-[7px] bg-[#ba0517] rounded-full border border-[#032d60]" />
+            <span className="absolute top-1 right-1 w-[7px] h-[7px] bg-[#ba0517] rounded-full border border-[#0a1f3c]" />
           </button>
 
           {/* Help */}
@@ -115,7 +114,7 @@ export default function Layout() {
           <div className="relative ml-1.5">
             <button 
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="w-[30px] h-[30px] rounded-full bg-[#0176d3] flex items-center justify-center text-white text-[11px] font-bold hover:ring-2 hover:ring-white/30 transition-all"
+              className="w-[30px] h-[30px] rounded-full bg-[#1763e6] flex items-center justify-center text-white text-[11px] font-bold hover:ring-2 hover:ring-white/30 transition-all"
             >
               {user?.first_name?.[0]}{user?.last_name?.[0]}
             </button>
