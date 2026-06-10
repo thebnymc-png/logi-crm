@@ -172,6 +172,54 @@ Automate the backup with a daily `cron` entry; copy the archive off-host.
 
 ---
 
+## Alternative host: Fly.io (instead of steps 2–5)
+
+Fly runs the same `Dockerfile` and gives the SQLite DB a persistent **Fly Volume**,
+plus automatic TLS and a public hostname — no separate tunnel needed. Because SQLite
+is single-writer, run **exactly one machine with one volume** (config in `fly.toml`).
+
+```bash
+# Install flyctl and sign in
+curl -L https://fly.io/install.sh | sh
+fly auth login
+
+# First time: create the app (edit `app` in fly.toml to a unique name first)
+fly apps create logicrm
+
+# Create the persistent SQLite volume (1 GB, same region as fly.toml)
+fly volumes create logicrm_data --region syd --size 1
+
+# Secrets (server refuses to boot in production without JWT_SECRET)
+fly secrets set JWT_SECRET="$(openssl rand -hex 48)"
+
+# Deploy (builds the Dockerfile)
+fly deploy
+
+# Pin to a single machine — SQLite must not run multi-writer
+fly scale count 1
+
+fly open                 # opens https://<app>.fly.dev
+fly logs                 # tail logs
+fly ssh console          # shell into the machine (backend access)
+```
+
+**Custom domain + Cloudflare:** point `crm.example.com` at Fly and let Fly manage the
+cert:
+```bash
+fly certs add crm.example.com
+fly ips list             # shows the A/AAAA (or use the *.fly.dev CNAME)
+```
+Then add the matching DNS record in Cloudflare set to **DNS only (grey cloud)** for
+the initial cert issuance; you can switch it to **proxied (orange)** afterwards.
+
+CI/CD: replace the GHCR publish with a Fly deploy by adding a job that runs
+`fly deploy --remote-only` using a `FLY_API_TOKEN` repo secret
+(`fly tokens create deploy`). Ask and I'll wire it into `deploy.yml`.
+
+Backups on Fly: `fly ssh console -C "tar czf - -C /data ." > logicrm-$(date +%F).tar.gz`.
+
+---
+
 ## Alternative: split deploy (Cloudflare Pages + separate API)
 
 If you'd rather serve the SPA from Cloudflare's global CDN:
