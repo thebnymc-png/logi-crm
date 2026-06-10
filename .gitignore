@@ -9,6 +9,13 @@ node_modules/
 # Runtime database (auto-generated with seed data on first run)
 backend/data/crm.db
 backend/data/*.db-journal
+backend/data/*.db-wal
+backend/data/*.db-shm
+
+# Environment secrets
+.env
+**/.env
+!**/.env.example
 
 # Local Claude settings & misc
 .claude/settings.local.json

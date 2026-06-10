@@ -1,100 +1,81 @@
-const initSqlJs = require('sql.js');
+const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 
-const DB_PATH = path.join(__dirname, 'data', 'crm.db');
-const dataDir = path.join(__dirname, 'data');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'crm.db');
+const dataDir = path.dirname(DB_PATH);
 
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-let db = null;
-
-function saveDatabase() {
-  if (db) {
-    const data = db.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(DB_PATH, buffer);
-  }
+// better-sqlite3 rejects `undefined` and boolean bindings, whereas the route
+// layer occasionally passes them (e.g. dynamic PUT bodies). Normalize here so
+// the rest of the codebase can keep its existing call patterns.
+function sanitizeParams(params) {
+  return params.map((p) => {
+    if (p === undefined) return null;
+    if (typeof p === 'boolean') return p ? 1 : 0;
+    return p;
+  });
 }
 
-setInterval(saveDatabase, 30000);
-process.on('exit', saveDatabase);
-process.on('SIGINT', () => { saveDatabase(); process.exit(); });
-process.on('SIGTERM', () => { saveDatabase(); process.exit(); });
-
+// Thin wrapper preserving the `prepare().get/all/run(...params)` + `exec`/`pragma`
+// surface the rest of the backend was written against, now backed by the
+// synchronous, ACID-durable better-sqlite3 engine. Prepared statements are
+// cached per-SQL so hot paths avoid re-compiling.
 class DatabaseWrapper {
   constructor(sqlDb) {
     this.db = sqlDb;
+    this._stmtCache = new Map();
+  }
+
+  _statement(sql) {
+    let stmt = this._stmtCache.get(sql);
+    if (!stmt) {
+      stmt = this.db.prepare(sql);
+      this._stmtCache.set(sql, stmt);
+    }
+    return stmt;
   }
 
   prepare(sql) {
     const self = this;
     return {
-      run(...params) {
-        self.db.run(sql, params);
-        const lastId = self.db.exec("SELECT last_insert_rowid() as id")[0]?.values[0][0];
-        const changes = self.db.getRowsModified();
-        saveDatabase();
-        return { lastInsertRowid: lastId, changes };
-      },
-      get(...params) {
-        const stmt = self.db.prepare(sql);
-        stmt.bind(params);
-        if (stmt.step()) {
-          const cols = stmt.getColumnNames();
-          const vals = stmt.get();
-          stmt.free();
-          const row = {};
-          cols.forEach((col, i) => row[col] = vals[i]);
-          return row;
-        }
-        stmt.free();
-        return undefined;
-      },
-      all(...params) {
-        const results = [];
-        const stmt = self.db.prepare(sql);
-        stmt.bind(params);
-        while (stmt.step()) {
-          const cols = stmt.getColumnNames();
-          const vals = stmt.get();
-          const row = {};
-          cols.forEach((col, i) => row[col] = vals[i]);
-          results.push(row);
-        }
-        stmt.free();
-        return results;
-      }
+      run: (...params) => self._statement(sql).run(...sanitizeParams(params)),
+      get: (...params) => self._statement(sql).get(...sanitizeParams(params)),
+      all: (...params) => self._statement(sql).all(...sanitizeParams(params)),
     };
   }
 
   exec(sql) {
     this.db.exec(sql);
-    saveDatabase();
   }
 
   pragma(str) {
     try {
-      this.db.exec(`PRAGMA ${str}`);
-    } catch(e) {}
+      this.db.pragma(str);
+    } catch (e) { /* non-fatal */ }
   }
 }
 
 async function initializeDatabase() {
-  const SQL = await initSqlJs();
-  
-  if (fs.existsSync(DB_PATH)) {
-    const fileBuffer = fs.readFileSync(DB_PATH);
-    db = new SQL.Database(fileBuffer);
-  } else {
-    db = new SQL.Database();
-  }
+  const db = new Database(DB_PATH);
+  // WAL gives durable, concurrent-read persistence written straight to disk —
+  // no more "lose up to 30s on crash" snapshotting.
+  db.pragma('journal_mode = WAL');
+  db.pragma('foreign_keys = ON');
+
+  const shutdown = () => {
+    try { db.close(); } catch (e) { /* already closed */ }
+    process.exit(0);
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 
   const wrapper = new DatabaseWrapper(db);
-  
+
   wrapper.exec(`
     PRAGMA foreign_keys = ON;
 
@@ -559,8 +540,6 @@ function seedDemoData(wrapper) {
   for (const c of contracts) {
     wrapper.prepare('INSERT INTO contracts (contract_number, title, account_id, contact_id, deal_id, owner_id, status, type, priority, value, monthly_value, currency, service_type, origin, destination, mode, frequency, volume_commitment, sla_terms, difot_target, payment_terms, auto_renew, start_date, end_date, renewal_date, signed_date, terminated_date, termination_reason, notes, group_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(...c);
   }
-
-  saveDatabase();
 }
 
 module.exports = { initializeDatabase };

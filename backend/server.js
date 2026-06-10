@@ -1,5 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -9,20 +12,55 @@ const { registerIntegrationRoutes } = require('./integrations');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'logistics-crm-secret-key-2026';
+const isProduction = process.env.NODE_ENV === 'production';
 
-app.use(cors());
-app.use(express.json());
+// JWT secret must come from the environment in production. A weak fallback is
+// only allowed for local development, and it is loudly flagged.
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  if (isProduction) {
+    console.error('FATAL: JWT_SECRET environment variable is required in production.');
+    process.exit(1);
+  }
+  console.warn('WARNING: JWT_SECRET is not set — using an insecure development fallback. Do NOT use in production.');
+}
+const ACTIVE_JWT_SECRET = JWT_SECRET || 'insecure-dev-only-secret';
+
+// Trust the reverse proxy (Nginx) so client IPs / rate limiting work correctly.
+app.set('trust proxy', 1);
+
+// Security headers. CSP is disabled here because the SPA is served from the
+// same origin and tightening it needs per-asset auditing — tracked as follow-up.
+app.use(helmet({ contentSecurityPolicy: false }));
+
+// CORS: lock to an explicit allow-list in production, permissive in dev.
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map((o) => o.trim()).filter(Boolean);
+app.use(cors(isProduction && allowedOrigins.length
+  ? { origin: allowedOrigins, credentials: true }
+  : {}));
+
+app.use(express.json({ limit: '1mb' }));
+
+// Rate limiting: a broad cap on the API surface plus a stricter cap on auth.
+const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 1000, standardHeaders: true, legacyHeaders: false });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false, message: { error: 'Too many attempts, please try again later.' } });
+app.use('/api/', apiLimiter);
+
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 let db = null;
+
+// Lightweight, unauthenticated health check for load balancers / uptime probes.
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+});
 
 // Auth middleware
 function authenticate(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Authentication required' });
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, ACTIVE_JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
@@ -30,14 +68,25 @@ function authenticate(req, res, next) {
   }
 }
 
+// Role guard — use after `authenticate` to restrict a route to given roles.
+function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+    next();
+  };
+}
+
 // ==================== AUTH ROUTES ====================
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', authLimiter, (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
   if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, ACTIVE_JWT_SECRET, { expiresIn: '7d' });
   res.json({ token, user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role } });
 });
 
@@ -46,13 +95,16 @@ app.get('/api/auth/me', authenticate, (req, res) => {
   res.json(user);
 });
 
-app.post('/api/auth/register', (req, res) => {
+// Registration creates users and is therefore an admin-only operation.
+app.post('/api/auth/register', authenticate, requireRole('admin'), (req, res) => {
   const { email, password, first_name, last_name, role } = req.body;
+  if (!email || !password || !first_name || !last_name) {
+    return res.status(400).json({ error: 'email, password, first_name and last_name are required' });
+  }
   const hashedPassword = bcrypt.hashSync(password, 10);
   try {
     const result = db.prepare('INSERT INTO users (email, password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?)').run(email, hashedPassword, first_name, last_name, role || 'sales_rep');
-    const token = jwt.sign({ id: result.lastInsertRowid, email, role: role || 'sales_rep' }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: result.lastInsertRowid, email, first_name, last_name, role: role || 'sales_rep' } });
+    res.status(201).json({ user: { id: result.lastInsertRowid, email, first_name, last_name, role: role || 'sales_rep' } });
   } catch (err) {
     res.status(400).json({ error: 'Email already exists' });
   }
@@ -479,9 +531,46 @@ app.delete('/api/contracts/:id', authenticate, (req, res) => {
 });
 
 // ==================== USERS ROUTES ====================
+const VALID_ROLES = ['admin', 'manager', 'sales_rep'];
+
 app.get('/api/users', authenticate, (req, res) => {
   const users = db.prepare('SELECT id, email, first_name, last_name, role, created_at FROM users').all();
   res.json({ users });
+});
+
+app.put('/api/users/:id', authenticate, requireRole('admin'), (req, res) => {
+  const { first_name, last_name, email, role } = req.body;
+  if (role && !VALID_ROLES.includes(role)) return res.status(400).json({ error: 'Invalid role' });
+  const existing = db.prepare('SELECT id FROM users WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'User not found' });
+  try {
+    db.prepare('UPDATE users SET first_name = COALESCE(?, first_name), last_name = COALESCE(?, last_name), email = COALESCE(?, email), role = COALESCE(?, role), updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .run(first_name, last_name, email, role, req.params.id);
+  } catch (err) {
+    return res.status(400).json({ error: 'Email already exists' });
+  }
+  const user = db.prepare('SELECT id, email, first_name, last_name, role, created_at FROM users WHERE id = ?').get(req.params.id);
+  res.json(user);
+});
+
+// Password change: admins may reset anyone; users may change their own.
+app.post('/api/users/:id/password', authenticate, (req, res) => {
+  const targetId = Number(req.params.id);
+  if (req.user.role !== 'admin' && req.user.id !== targetId) {
+    return res.status(403).json({ error: 'Insufficient permissions' });
+  }
+  const { password } = req.body;
+  if (!password || password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  const existing = db.prepare('SELECT id FROM users WHERE id = ?').get(targetId);
+  if (!existing) return res.status(404).json({ error: 'User not found' });
+  db.prepare('UPDATE users SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(bcrypt.hashSync(password, 10), targetId);
+  res.json({ success: true });
+});
+
+app.delete('/api/users/:id', authenticate, requireRole('admin'), (req, res) => {
+  if (req.user.id === Number(req.params.id)) return res.status(400).json({ error: 'You cannot delete your own account' });
+  db.prepare('DELETE FROM users WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
 });
 
 // Initialize and start
