@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+# (frontend/dist is kept so the app is deployable out-of-the-box;
+#  remove the next line to exclude it and rebuild via `npm run build`)
+
+# Runtime database (auto-generated with seed data on first run)
+backend/data/crm.db
+backend/data/*.db-journal
+
+# Local Claude settings & misc
+.claude/settings.local.json
+.DS_Store
+*.log
+npm-debug.log*
