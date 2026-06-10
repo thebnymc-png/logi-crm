@@ -1,0 +1,37 @@
+# LogiCRM — single-service deployment (API + SPA on one origin).
+#
+#   1. cp .env.example .env   (set JWT_SECRET — see backend/.env.example)
+#   2. docker compose up -d
+#
+# Use the prebuilt image from GHCR (set by the deploy workflow) or build locally.
+services:
+  logicrm:
+    image: ghcr.io/thebnymc-png/logi-crm:latest
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3001"      # bound to localhost; Cloudflare Tunnel reaches it
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      DB_PATH: /data/crm.db
+    volumes:
+      - logicrm-data:/data        # persistent SQLite (crm.db + WAL sidecars)
+
+  # ── Optional: expose the service to Cloudflare without opening any port ──
+  # Create a tunnel in the Cloudflare Zero Trust dashboard, copy its token,
+  # set TUNNEL_TOKEN in .env, then `docker compose --profile tunnel up -d`.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
+    depends_on:
+      - logicrm
+
+volumes:
+  logicrm-data:

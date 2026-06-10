@@ -1,4 +1,7 @@
-const API_BASE = '/api';
+// Same-origin by default (the backend serves this SPA). Override with
+// VITE_API_URL at build time for a split deploy (e.g. SPA on Cloudflare Pages,
+// API on a separate origin) — e.g. VITE_API_URL=https://api.example.com/api
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 function getToken() {
   return localStorage.getItem('crm_token');

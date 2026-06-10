@@ -53,12 +53,27 @@ All backend configuration is via environment variables — see `backend/.env.exa
 `JWT_SECRET` is **required** when `NODE_ENV=production` (the server refuses to start
 without it).
 
-## Production notes
+## Deployment
 
-- Run behind a TLS-terminating reverse proxy (e.g. Nginx). `trust proxy` is enabled.
-- Set `NODE_ENV=production`, a strong `JWT_SECRET`, and `CORS_ORIGINS`.
-- Health check endpoint for load balancers: `GET /api/health`.
-- Back up `backend/data/crm.db` (plus its `-wal`/`-shm` siblings) regularly.
+Full guide: **[DEPLOYMENT.md](DEPLOYMENT.md)** — single-container deploy (API + SPA)
+behind Cloudflare (DNS, TLS, zero-trust tunnel), plus auth/user setup and backups.
+
+Quick start with Docker:
+
+```bash
+cp .env.example .env                              # set JWT_SECRET
+echo "JWT_SECRET=$(openssl rand -hex 48)" >> .env
+docker compose up -d                              # http://127.0.0.1:3001
+```
+
+CI/CD (`.github/workflows/`): `ci.yml` builds + smoke-tests every push/PR;
+`deploy.yml` publishes the production image to GHCR on `main`/tags.
+
+Production notes:
+- Set `NODE_ENV=production`, a strong `JWT_SECRET`, and `CORS_ORIGINS` if split-origin.
+  The server refuses to start in production without `JWT_SECRET`.
+- Health check for load balancers/uptime: `GET /api/health`.
+- Persist the SQLite volume (`/data`, i.e. `crm.db` + `-wal`/`-shm`); back it up regularly.
 
 ## API overview
 
