@@ -14,19 +14,31 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// JWT secret must come from the environment in production. A weak fallback is
-// only allowed for local development, and it is loudly flagged.
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
+let db = null;
+
+// Select the auth provider: Clerk (multi-tenant orgs) when CLERK_SECRET_KEY is
+// set, otherwise the original custom-JWT auth. authenticate() reads the DB lazily
+// via the getter, so it works before `db` is assigned in start().
+const createAuth = require('./auth');
+const { authenticate, requireRole, CLERK_ENABLED, jwtSecret } = createAuth(() => db);
+
+if (CLERK_ENABLED) {
+  console.log('Auth provider: Clerk (multi-tenant organizations).');
+} else if (!process.env.JWT_SECRET) {
   if (isProduction) {
-    console.error('FATAL: JWT_SECRET environment variable is required in production.');
+    console.error('FATAL: JWT_SECRET is required in production (or configure Clerk via CLERK_SECRET_KEY).');
     process.exit(1);
   }
   console.warn('WARNING: JWT_SECRET is not set — using an insecure development fallback. Do NOT use in production.');
 }
-const ACTIVE_JWT_SECRET = JWT_SECRET || 'insecure-dev-only-secret';
 
-// Trust the reverse proxy (Nginx) so client IPs / rate limiting work correctly.
+// Guards legacy email/password endpoints off when auth is delegated to Clerk.
+function legacyAuthOnly(req, res, next) {
+  if (CLERK_ENABLED) return res.status(404).json({ error: 'Auth is managed by Clerk' });
+  next();
+}
+
+// Trust the reverse proxy (Fly / Nginx / Cloudflare) so client IPs + rate limits work.
 app.set('trust proxy', 1);
 
 // Security headers. CSP is disabled here because the SPA is served from the
@@ -48,45 +60,20 @@ app.use('/api/', apiLimiter);
 
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-let db = null;
-
 // Lightweight, unauthenticated health check for load balancers / uptime probes.
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
 });
 
-// Auth middleware
-function authenticate(req, res, next) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return res.status(401).json({ error: 'Authentication required' });
-  try {
-    const decoded = jwt.verify(token, ACTIVE_JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-}
-
-// Role guard — use after `authenticate` to restrict a route to given roles.
-function requireRole(...roles) {
-  return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'Insufficient permissions' });
-    }
-    next();
-  };
-}
-
-// ==================== AUTH ROUTES ====================
-app.post('/api/auth/login', authLimiter, (req, res) => {
+// ==================== AUTH ROUTES (legacy / non-Clerk) ====================
+app.post('/api/auth/login', legacyAuthOnly, authLimiter, (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
   if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, ACTIVE_JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, jwtSecret, { expiresIn: '7d' });
   res.json({ token, user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role } });
 });
 
@@ -96,7 +83,7 @@ app.get('/api/auth/me', authenticate, (req, res) => {
 });
 
 // Registration creates users and is therefore an admin-only operation.
-app.post('/api/auth/register', authenticate, requireRole('admin'), (req, res) => {
+app.post('/api/auth/register', legacyAuthOnly, authenticate, requireRole('admin'), (req, res) => {
   const { email, password, first_name, last_name, role } = req.body;
   if (!email || !password || !first_name || !last_name) {
     return res.status(400).json({ error: 'email, password, first_name and last_name are required' });
@@ -554,7 +541,7 @@ app.put('/api/users/:id', authenticate, requireRole('admin'), (req, res) => {
 });
 
 // Password change: admins may reset anyone; users may change their own.
-app.post('/api/users/:id/password', authenticate, (req, res) => {
+app.post('/api/users/:id/password', legacyAuthOnly, authenticate, (req, res) => {
   const targetId = Number(req.params.id);
   if (req.user.role !== 'admin' && req.user.id !== targetId) {
     return res.status(403).json({ error: 'Insufficient permissions' });

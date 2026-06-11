@@ -7,14 +7,22 @@
 services:
   logicrm:
     image: ghcr.io/thebnymc-png/logi-crm:latest
-    build: .
+    build:
+      context: .
+      args:
+        # Baked into the SPA at build time. Set VITE_CLERK_PUBLISHABLE_KEY to
+        # build the Clerk-enabled frontend (must pair with CLERK_SECRET_KEY below).
+        VITE_API_URL: ${VITE_API_URL:-}
+        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY:-}
     restart: unless-stopped
     ports:
       - "127.0.0.1:3001:3001"      # bound to localhost; Cloudflare Tunnel reaches it
     environment:
       NODE_ENV: production
       PORT: "3001"
-      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      # Provide ONE of these: JWT_SECRET (built-in auth) or CLERK_SECRET_KEY (Clerk).
+      JWT_SECRET: ${JWT_SECRET:-}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       DB_PATH: /data/crm.db
     volumes:

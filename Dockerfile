@@ -6,8 +6,12 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
-# VITE_API_URL is baked in at build time; defaults to same-origin "/api".
+# Vite env is baked in at build time. VITE_API_URL defaults to same-origin "/api".
+# Set VITE_CLERK_PUBLISHABLE_KEY to build the Clerk-enabled SPA (multi-tenant auth).
 ARG VITE_API_URL
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_API_URL=$VITE_API_URL \
+    VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
 RUN npm run build
 
 # ── Stage 2: install backend production deps (compiles better-sqlite3) ───────

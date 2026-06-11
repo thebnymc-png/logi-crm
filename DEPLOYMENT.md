@@ -172,6 +172,50 @@ Automate the backup with a daily `cron` entry; copy the archive off-host.
 
 ---
 
+## Authentication via Clerk (multi-tenant organizations)
+
+Auth is **feature-flagged**: with no Clerk keys the app uses the built-in JWT login
+above. Set the Clerk keys and it switches to Clerk's hosted sign-in, sessions, and
+**Organizations** (each customer company = one org). Identity is org-aware end to
+end; a local `users` row is auto-created per Clerk user so existing relationships
+keep working.
+
+**Set up Clerk:**
+1. Create an application at [clerk.com](https://clerk.com). Under **Organizations**,
+   toggle **Enable organizations** on.
+2. (Optional) Under **Roles**, add a `manager` role. Defaults are `admin` and
+   `member` → mapped to app roles `admin` / `sales_rep`; `manager` → `manager`.
+3. Copy the **Publishable key** (`pk_…`) and **Secret key** (`sk_…`) from **API Keys**.
+
+**Configure the app** — the publishable key is baked into the SPA at *build time*,
+the secret key is a *runtime* env var:
+
+```bash
+# .env  (compose) — provide Clerk keys instead of JWT_SECRET
+CLERK_SECRET_KEY=sk_live_xxx
+VITE_CLERK_PUBLISHABLE_KEY=pk_live_xxx
+
+docker compose up -d --build         # --build so the publishable key is baked in
+```
+
+On **Fly.io**:
+```bash
+fly secrets set CLERK_SECRET_KEY=sk_live_xxx
+fly deploy --build-arg VITE_CLERK_PUBLISHABLE_KEY=pk_live_xxx
+```
+
+**First sign-in:** open the app → Clerk sign-in → create/join an **Organization** →
+you land in LogiCRM. Manage users, invites, roles and orgs from Clerk's dashboard
+(the built-in `/api/auth/*` and password endpoints return 404 in this mode).
+
+> **Scope note (what's done vs. next):** this delivers Clerk **authentication +
+> org-aware identity** — every request is verified and carries its `org_id`.
+> **Per-table data isolation** (adding `org_id` to accounts/contacts/deals/… and
+> filtering every query by org) is the next step and needs your Clerk keys plus two
+> test orgs to verify. Until then, run one org per deployment if you load real data.
+
+---
+
 ## Alternative host: Fly.io (instead of steps 2–5)
 
 Fly runs the same `Dockerfile` and gives the SQLite DB a persistent **Fly Volume**,

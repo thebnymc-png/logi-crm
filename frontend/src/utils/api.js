@@ -3,12 +3,21 @@
 // API on a separate origin) — e.g. VITE_API_URL=https://api.example.com/api
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
-function getToken() {
-  return localStorage.getItem('crm_token');
-}
+// Pluggable auth so the same client works for both providers:
+//  • legacy JWT  — reads the token from localStorage (default below)
+//  • Clerk       — ClerkAuthBridge registers Clerk's getToken() at runtime
+let tokenGetter = async () => localStorage.getItem('crm_token');
+let unauthorizedHandler = () => {
+  localStorage.removeItem('crm_token');
+  localStorage.removeItem('crm_user');
+  window.location.href = '/login';
+};
+
+export function setTokenGetter(fn) { tokenGetter = fn; }
+export function setUnauthorizedHandler(fn) { unauthorizedHandler = fn; }
 
 async function request(endpoint, options = {}) {
-  const token = getToken();
+  const token = await tokenGetter();
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -19,16 +28,14 @@ async function request(endpoint, options = {}) {
   };
 
   const response = await fetch(`${API_BASE}${endpoint}`, config);
-  
+
   if (response.status === 401) {
-    localStorage.removeItem('crm_token');
-    localStorage.removeItem('crm_user');
-    window.location.href = '/login';
+    unauthorizedHandler();
     throw new Error('Unauthorized');
   }
 
   const data = await response.json();
-  
+
   if (!response.ok) {
     throw new Error(data.error || 'Request failed');
   }

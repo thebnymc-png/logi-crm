@@ -87,6 +87,8 @@ async function initializeDatabase() {
       last_name TEXT NOT NULL,
       role TEXT DEFAULT 'sales_rep',
       avatar TEXT,
+      clerk_user_id TEXT,
+      org_id TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -336,12 +338,25 @@ async function initializeDatabase() {
     );
   `);
 
+  // Idempotent migrations for databases created before Clerk support existed.
+  ensureColumn(wrapper, 'users', 'clerk_user_id', 'TEXT');
+  ensureColumn(wrapper, 'users', 'org_id', 'TEXT');
+  wrapper.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_clerk_user_id ON users(clerk_user_id) WHERE clerk_user_id IS NOT NULL');
+
   const userCount = wrapper.prepare('SELECT COUNT(*) as count FROM users').get();
   if (userCount.count === 0) {
     seedDemoData(wrapper);
   }
 
   return wrapper;
+}
+
+// Adds a column only if it's missing — safe to run on every startup.
+function ensureColumn(wrapper, table, column, type) {
+  const cols = wrapper.prepare(`PRAGMA table_info(${table})`).all();
+  if (!cols.some((c) => c.name === column)) {
+    wrapper.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+  }
 }
 
 function seedDemoData(wrapper) {
